@@ -9,11 +9,11 @@ import (
 )
 
 type User struct {
-	ID        primitive.ObjectID   `json:"id" bson:"_id,omitempty"`
+	ID        primitive.ObjectID   `json:"id,omitempty" bson:"_id,omitempty"`
 	Monsters  []primitive.ObjectID `json:"monsters" bson:"monsters"`
-	Username  string               `json:"username" bson:"username"`
-	Password  string               `json:"password" bson:"password"`
-	Role      *string              `json:"role" bson:"role"`
+	Username  string               `json:"username" bson:"username" validate:"required"`
+	Password  string               `json:"password,omitempty" bson:"password" validate:"omitempty,required,gte=6"`
+	Role      *string              `json:"role" bson:"role" validate:"required"`
 	CreatedAt time.Time            `json:"created_at" bson:"created_at"`
 	UpdatedAt time.Time            `json:"updated_at" bson:"updated_at"`
 }

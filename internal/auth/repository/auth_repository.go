@@ -119,11 +119,8 @@ func (r *AuthRepo) FindByID(ctx context.Context, userID primitive.ObjectID) (*do
 func (r *AuthRepo) FindByUsername(ctx context.Context, username string) (*domain.User, error) {
 	var user domain.User
 
-	if err := r.db.FindOne(ctx, bson.M{"username": username}).Decode(&user); err != nil {
-		if errors.Is(err, mongo.ErrNoDocuments) {
-			return &domain.User{}, errors.Wrap(err, httpErr.ErrNotFound)
-		}
-
+	err := r.db.FindOne(ctx, bson.M{"username": username}).Decode(&user)
+	if err != nil {
 		return &domain.User{}, err
 	}
 

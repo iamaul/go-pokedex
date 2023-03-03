@@ -1,15 +1,15 @@
 server:
   AppVersion: 1.0.0
-  Port: :5000
+  Port: :8000
   Mode: development
   JwtSecretKey: secretkey
   CookieName: jwt-token
   ReadTimeout: 5
   WriteTimeout: 5
-  SSL: true
+  SSL: false
   CtxDefaultTimeout: 12
   CSRF: true
-  Debug: false
+  Debug: true
 
 logger:
   Development: true
@@ -30,6 +30,6 @@ session:
   Expire: 3600
 
 mongodb:
-  MongoURI: uristring
-  Username: username
-  Password: password
+  MongoURI: mongodb://localhost:27018
+  Username: admin
+  Password: qwerty
