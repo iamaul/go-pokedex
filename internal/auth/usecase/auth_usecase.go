@@ -1,0 +1,120 @@
+package usecase
+
+import (
+	"context"
+	"net/http"
+
+	"github.com/iamaul/go-pokedex/config"
+	"github.com/iamaul/go-pokedex/internal/auth"
+	"github.com/iamaul/go-pokedex/internal/domain"
+	httpErr "github.com/iamaul/go-pokedex/pkg/error"
+	"github.com/iamaul/go-pokedex/pkg/logger"
+	"github.com/iamaul/go-pokedex/pkg/utils"
+	"github.com/pkg/errors"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+type AuthUsecase struct {
+	cfg      *config.Config
+	authRepo auth.Repository
+	logger   logger.Logger
+}
+
+func NewAuthUsecase(cfg *config.Config, authRepo auth.Repository, log logger.Logger) auth.Usecase {
+	return &AuthUsecase{cfg: cfg, authRepo: authRepo, logger: log}
+}
+
+func (u *AuthUsecase) UserRegistration(ctx context.Context, user *domain.User) (*domain.UserWithToken, error) {
+	userExists, err := u.authRepo.FindByUsername(ctx, user.Username)
+	if userExists != nil || err != nil {
+		return nil, httpErr.NewRestErrorWithMessage(http.StatusBadRequest, httpErr.ErrEmailAlreadyExists, nil)
+	}
+
+	if err = user.PrepareCreate(); err != nil {
+		return nil, httpErr.NewBadRequestError(errors.Wrap(err, "AuthUsecase.UserRegistration.PrepareCreate"))
+	}
+
+	createdUser, err := u.authRepo.CreateUser(ctx, user)
+	if err != nil {
+		return nil, err
+	}
+
+	// Set value of password payload to empty for a security reason
+	createdUser.SanitizePassword()
+
+	token, err := utils.GenerateJWTToken(createdUser, u.cfg)
+	if err != nil {
+		return nil, httpErr.NewInternalServerError(errors.Wrap(err, "AuthUsecase.UserRegistration.GenerateJWTToken"))
+	}
+
+	return &domain.UserWithToken{
+		User:  createdUser,
+		Token: token,
+	}, nil
+}
+
+func (u *AuthUsecase) UserAuthentication(ctx context.Context, user *domain.User) (*domain.UserWithToken, error) {
+	foundUser, err := u.authRepo.FindByUsername(ctx, user.Username)
+	if err != nil {
+		return nil, err
+	}
+
+	if err = foundUser.ComparePasswords(user.Password); err != nil {
+		return nil, httpErr.NewUnauthorizedError(errors.Wrap(err, "AuthUsecase.UserAuthentication.ComparePasswords"))
+	}
+
+	// Set value of password payload to empty for a security reason
+	foundUser.SanitizePassword()
+
+	token, err := utils.GenerateJWTToken(foundUser, u.cfg)
+	if err != nil {
+		return nil, httpErr.NewInternalServerError(errors.Wrap(err, "AuthUsecase.UserAuthentication.GenerateJWTToken"))
+	}
+
+	return &domain.UserWithToken{
+		User:  foundUser,
+		Token: token,
+	}, nil
+}
+
+func (u *AuthUsecase) UserUpdate(ctx context.Context, user *domain.UserUpdate) (*domain.UserUpdate, error) {
+	if err := user.PrepareUpdate(); err != nil {
+		return nil, httpErr.NewBadRequestError(errors.Wrap(err, "AuthUsecase.UserUpdate.PrepareUpdate"))
+	}
+
+	updatedUser, err := u.authRepo.UpdateUser(ctx, user)
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedUser, nil
+}
+
+func (u *AuthUsecase) UserDeletion(ctx context.Context, userID primitive.ObjectID) error {
+	if err := u.authRepo.DeleteUser(ctx, userID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (u *AuthUsecase) UserList(ctx context.Context, pq *utils.PaginationQuery) (*domain.UserList, error) {
+	return u.authRepo.FetchUsers(ctx, pq)
+}
+
+func (u *AuthUsecase) UserCatchMonster(ctx context.Context, userID primitive.ObjectID, monsterID primitive.ObjectID) error {
+	// @ToDo: Given monster id to be attached with owner (user property)
+	return nil
+}
+
+func (u *AuthUsecase) GetUserByID(ctx context.Context, userID primitive.ObjectID) (*domain.User, error) {
+	user, err := u.authRepo.FindByID(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Set value of password payload to empty for a security reason
+	user.SanitizePassword()
+
+	return user, nil
+}
