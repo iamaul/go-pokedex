@@ -26,10 +26,12 @@ func NewAuthRepo(db *mongo.Database) auth.Repository {
 }
 
 func (r *AuthRepo) CreateUser(ctx context.Context, user *domain.User) (*domain.User, error) {
-	_, err := r.db.InsertOne(ctx, user)
+	result, err := r.db.InsertOne(ctx, user)
 	if mongodb.IsDuplicate(err) {
 		return nil, errors.Wrap(err, httpErr.ErrEmailAlreadyExists)
 	}
+
+	user.ID = result.InsertedID.(primitive.ObjectID)
 
 	return user, err
 }
@@ -85,6 +87,7 @@ func (r *AuthRepo) FetchUsers(ctx context.Context, pq *utils.PaginationQuery) (*
 		if err := cursor.Decode(&user); err != nil {
 			return nil, errors.Wrap(err, "cursor.Decode")
 		}
+		user.SanitizePassword()
 		users = append(users, &user)
 	}
 
@@ -120,11 +123,8 @@ func (r *AuthRepo) FindByUsername(ctx context.Context, username string) (*domain
 	var user domain.User
 
 	err := r.db.FindOne(ctx, bson.M{"username": username}).Decode(&user)
-	if err != nil {
-		return &domain.User{}, err
-	}
 
-	return &user, nil
+	return &user, err
 }
 
 func (r *AuthRepo) AttachMonster(ctx context.Context, userID, monsterID primitive.ObjectID) error {

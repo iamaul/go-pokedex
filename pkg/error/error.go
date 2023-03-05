@@ -11,7 +11,7 @@ import (
 
 const (
 	ErrBadRequest         = "bad request"
-	ErrEmailAlreadyExists = "user with given email already exists"
+	ErrEmailAlreadyExists = "user with given username already exists"
 	ErrNoSuchUser         = "user not found"
 	ErrWrongCredentials   = "wrong credentials"
 	ErrNotFound           = "not found"
@@ -34,7 +34,7 @@ var (
 	BadQueryParams        = errors.New("invalid query params")
 	InternalServerError   = errors.New("internal Server Error")
 	RequestTimeoutError   = errors.New("request timeout")
-	ExistsEmailError      = errors.New("user with given email already exists")
+	ExistsEmailError      = errors.New("user with given username already exists")
 	InvalidJWTToken       = errors.New("invalid JWT token")
 	InvalidJWTClaims      = errors.New("invalid JWT claims")
 	NotAllowedImageHeader = errors.New("not allowed image header")

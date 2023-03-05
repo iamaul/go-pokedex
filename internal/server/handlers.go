@@ -64,7 +64,7 @@ func (s *Server) MapRouteHandlers(e *echo.Echo) error {
 	health := v1.Group("/health")
 	authGroup := v1.Group("/auth")
 
-	authHttp.AuthRoutes(authGroup, authHandlers, mw)
+	authHttp.AuthRoutes(authGroup, authHandlers, authUsecase, s.cfg, mw)
 
 	health.GET("", func(c echo.Context) error {
 		s.logger.Infof("Health check requestId: %s", utils.GetRequestID(c))

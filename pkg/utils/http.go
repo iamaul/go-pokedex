@@ -58,7 +58,7 @@ func ConfigureJWTCookie(cfg *config.Config, jwtToken string) *http.Cookie {
 // Configure JWT Cookie
 func CreateSessionCookie(cfg *config.Config, session string) *http.Cookie {
 	return &http.Cookie{
-		Name:  cfg.Session.Name,
+		Name:  cfg.Cookie.Name,
 		Value: session,
 		Path:  "/",
 		// Domain: "/",

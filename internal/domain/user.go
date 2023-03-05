@@ -9,19 +9,38 @@ import (
 )
 
 type User struct {
-	ID        primitive.ObjectID   `json:"id,omitempty" bson:"_id,omitempty"`
+	ID        primitive.ObjectID   `json:"_id" bson:"_id,omitempty"`
 	Monsters  []primitive.ObjectID `json:"monsters" bson:"monsters"`
 	Username  string               `json:"username" bson:"username" validate:"required"`
-	Password  string               `json:"password,omitempty" bson:"password" validate:"omitempty,required,gte=6"`
+	Password  string               `json:"password,omitempty" bson:"password" validate:"required,gte=6"`
 	Role      *string              `json:"role" bson:"role" validate:"required"`
 	CreatedAt time.Time            `json:"created_at" bson:"created_at"`
 	UpdatedAt time.Time            `json:"updated_at" bson:"updated_at"`
 }
 
 type UserUpdate struct {
-	ID       primitive.ObjectID `json:"-"`
+	ID       primitive.ObjectID `json:"_id,omitempty"`
 	Username string             `json:"username"`
 	Role     *string            `json:"role"`
+}
+
+type UserLogin struct {
+	Username string `json:"username" validate:"required"`
+	Password string `json:"password" validate:"required,gte=6"`
+}
+
+type UserList struct {
+	TotalCount int     `json:"total_count"`
+	TotalPages int     `json:"total_pages"`
+	Page       int     `json:"page"`
+	Size       int     `json:"size"`
+	HasMore    bool    `json:"has_more"`
+	Users      []*User `json:"users"`
+}
+
+type UserWithToken struct {
+	User  *User  `json:"user"`
+	Token string `json:"token"`
 }
 
 func (u *User) HashPassword() error {
@@ -62,18 +81,4 @@ func (u *UserUpdate) PrepareUpdate() error {
 		*u.Role = strings.ToLower(strings.TrimSpace(*u.Role))
 	}
 	return nil
-}
-
-type UserList struct {
-	TotalCount int     `json:"total_count"`
-	TotalPages int     `json:"total_pages"`
-	Page       int     `json:"page"`
-	Size       int     `json:"size"`
-	HasMore    bool    `json:"has_more"`
-	Users      []*User `json:"users"`
-}
-
-type UserWithToken struct {
-	User  *User  `json:"user"`
-	Token string `json:"token"`
 }

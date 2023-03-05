@@ -70,12 +70,12 @@ func (mw *MiddlewareManager) AdminMiddleware(next echo.HandlerFunc) echo.Handler
 }
 
 // Role based auth middleware using ctx user
-func (mw *MiddlewareManager) RootOrAdminMiddleware() echo.MiddlewareFunc {
+func (mw *MiddlewareManager) AuthenticatedOrAdminMiddleware() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			user, ok := c.Get("user").(*domain.User)
 			if !ok {
-				mw.logger.Errorf("Error c.Get(user) RequestID: %s, ERROR: %s,", utils.GetRequestID(c), "invalid user ctx")
+				mw.logger.Errorf("Error c.Get(user) RequestID: %s, Error: %s,", utils.GetRequestID(c), "invalid user ctx")
 				return c.JSON(http.StatusUnauthorized, httpErr.NewUnauthorizedError(httpErr.Unauthorized))
 			}
 
@@ -83,8 +83,8 @@ func (mw *MiddlewareManager) RootOrAdminMiddleware() echo.MiddlewareFunc {
 				return next(c)
 			}
 
-			if user.ID.String() != c.Param("user_id") {
-				mw.logger.Errorf("Error c.Get(user) RequestID: %s, UserID: %s, ERROR: %s,",
+			if user.ID.String() != c.Param("id") {
+				mw.logger.Errorf("Error c.Get(user) RequestID: %s, UserID: %s, Error: %s,",
 					utils.GetRequestID(c),
 					user.ID.String(),
 					"invalid user ctx",

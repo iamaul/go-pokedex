@@ -25,12 +25,12 @@ func NewAuthUsecase(cfg *config.Config, authRepo auth.Repository, log logger.Log
 }
 
 func (u *AuthUsecase) UserRegistration(ctx context.Context, user *domain.User) (*domain.UserWithToken, error) {
-	userExists, err := u.authRepo.FindByUsername(ctx, user.Username)
-	if userExists != nil || err != nil {
-		return nil, httpErr.NewRestErrorWithMessage(http.StatusBadRequest, httpErr.ErrEmailAlreadyExists, nil)
+	_, err := u.authRepo.FindByUsername(ctx, user.Username)
+	if err == nil {
+		return nil, httpErr.NewRestErrorWithMessage(http.StatusBadRequest, httpErr.ErrEmailAlreadyExists, err)
 	}
 
-	if err = user.PrepareCreate(); err != nil {
+	if err := user.PrepareCreate(); err != nil {
 		return nil, httpErr.NewBadRequestError(errors.Wrap(err, "AuthUsecase.UserRegistration.PrepareCreate"))
 	}
 

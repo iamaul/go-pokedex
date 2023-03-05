@@ -37,9 +37,52 @@ func (h *AuthHandler) Register() echo.HandlerFunc {
 			return c.JSON(httpErr.ErrorResponse(err))
 		}
 
-		c.SetCookie(utils.CreateSessionCookie(h.cfg, createdUser.User.Username))
-
 		return c.JSON(http.StatusCreated, createdUser)
+	}
+}
+
+func (h *AuthHandler) Login() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		login := &domain.UserLogin{}
+		if err := utils.ReadRequest(c, login); err != nil {
+			utils.LogResponseError(c, h.logger, err)
+			return c.JSON(httpErr.ErrorResponse(err))
+		}
+
+		userWithToken, err := h.authUsecase.UserAuthentication(c.Request().Context(), &domain.User{
+			Username: login.Username,
+			Password: login.Password,
+		})
+		if err != nil {
+			utils.LogResponseError(c, h.logger, err)
+			return c.JSON(httpErr.ErrorResponse(err))
+		}
+
+		return c.JSON(http.StatusOK, userWithToken)
+	}
+}
+
+func (h *AuthHandler) UpdateUser() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		me, ok := c.Get("user").(*domain.User)
+		if !ok {
+			utils.LogResponseError(c, h.logger, httpErr.NewUnauthorizedError(httpErr.Unauthorized))
+			return utils.ErrResponseWithLog(c, h.logger, httpErr.NewUnauthorizedError(httpErr.Unauthorized))
+		}
+		user := &domain.UserUpdate{}
+		user.ID = me.ID
+		if err := utils.ReadRequest(c, user); err != nil {
+			utils.LogResponseError(c, h.logger, err)
+			return c.JSON(httpErr.ErrorResponse(err))
+		}
+
+		updatedUser, err := h.authUsecase.UserUpdate(c.Request().Context(), user)
+		if err != nil {
+			utils.LogResponseError(c, h.logger, err)
+			return c.JSON(httpErr.ErrorResponse(err))
+		}
+
+		return c.JSON(http.StatusOK, updatedUser)
 	}
 }
 
@@ -75,5 +118,35 @@ func (h *AuthHandler) GetUserList() echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusOK, usersList)
+	}
+}
+
+func (h *AuthHandler) GetUser() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		userID, err := primitive.ObjectIDFromHex(c.Param("id"))
+		if err != nil {
+			utils.LogResponseError(c, h.logger, err)
+			return c.JSON(httpErr.ErrorResponse(err))
+		}
+
+		user, err := h.authUsecase.GetUserByID(c.Request().Context(), userID)
+		if err != nil {
+			utils.LogResponseError(c, h.logger, err)
+			return c.JSON(httpErr.ErrorResponse(err))
+		}
+
+		return c.JSON(http.StatusOK, user)
+	}
+}
+
+func (h *AuthHandler) Me() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		user, ok := c.Get("user").(*domain.User)
+		if !ok {
+			utils.LogResponseError(c, h.logger, httpErr.NewUnauthorizedError(httpErr.Unauthorized))
+			return utils.ErrResponseWithLog(c, h.logger, httpErr.NewUnauthorizedError(httpErr.Unauthorized))
+		}
+
+		return c.JSON(http.StatusOK, user)
 	}
 }

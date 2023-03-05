@@ -7,7 +7,7 @@ import (
 )
 
 type Monster struct {
-	ID           primitive.ObjectID   `json:"id" bson:"_id,omitempty"`
+	ID           primitive.ObjectID   `json:"_id" bson:"_id,omitempty"`
 	MonsterTypes []primitive.ObjectID `json:"monster_types" bson:"monster_types"`
 	Name         string               `json:"name" bson:"name"`
 	Description  string               `json:"description" bson:"description"`
@@ -19,4 +19,25 @@ type Monster struct {
 	Speed        int32                `json:"speed" bson:"speed"`
 	CreatedAt    time.Time            `json:"created_at" bson:"created_at"`
 	UpdatedAt    time.Time            `json:"updated_at" bson:"updated_at"`
+}
+
+type MonsterUpdate struct {
+	ID          primitive.ObjectID `json:"_id"`
+	Name        string             `json:"name"`
+	Description string             `json:"description"`
+	Size        float32            `json:"size"`
+	Weight      float32            `json:"weight"`
+	Hp          int32              `json:"hp"`
+	Attack      int32              `json:"attack"`
+	Defense     int32              `json:"defense"`
+	Speed       int32              `json:"speed"`
+}
+
+type MonsterList struct {
+	TotalCount int        `json:"total_count"`
+	TotalPages int        `json:"total_pages"`
+	Page       int        `json:"page"`
+	Size       int        `json:"size"`
+	HasMore    bool       `json:"has_more"`
+	Monsters   []*Monster `json:"monsters"`
 }
