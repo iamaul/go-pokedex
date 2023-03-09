@@ -28,7 +28,7 @@ func NewAuthRepo(db *mongo.Database) auth.Repository {
 func (r *AuthRepo) CreateUser(ctx context.Context, user *domain.User) (*domain.User, error) {
 	result, err := r.db.InsertOne(ctx, user)
 	if mongodb.IsDuplicate(err) {
-		return nil, errors.Wrap(err, httpErr.ErrEmailAlreadyExists)
+		return nil, errors.Wrap(err, httpErr.ErrUserAlreadyExists)
 	}
 
 	user.ID = result.InsertedID.(primitive.ObjectID)

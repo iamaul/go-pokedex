@@ -27,7 +27,7 @@ func NewAuthUsecase(cfg *config.Config, authRepo auth.Repository, log logger.Log
 func (u *AuthUsecase) UserRegistration(ctx context.Context, user *domain.User) (*domain.UserWithToken, error) {
 	_, err := u.authRepo.FindByUsername(ctx, user.Username)
 	if err == nil {
-		return nil, httpErr.NewRestErrorWithMessage(http.StatusBadRequest, httpErr.ErrEmailAlreadyExists, err)
+		return nil, httpErr.NewRestErrorWithMessage(http.StatusBadRequest, httpErr.ErrUserAlreadyExists, err)
 	}
 
 	if err := user.PrepareCreate(); err != nil {
@@ -107,7 +107,7 @@ func (u *AuthUsecase) UserCatchMonster(ctx context.Context, userID primitive.Obj
 	return nil
 }
 
-func (u *AuthUsecase) GetUserByID(ctx context.Context, userID primitive.ObjectID) (*domain.User, error) {
+func (u *AuthUsecase) GetByID(ctx context.Context, userID primitive.ObjectID) (*domain.User, error) {
 	user, err := u.authRepo.FindByID(ctx, userID)
 	if err != nil {
 		return nil, err

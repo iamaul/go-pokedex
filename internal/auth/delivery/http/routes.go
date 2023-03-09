@@ -12,7 +12,7 @@ func AuthRoutes(authGroup *echo.Group, h auth.DeliveryHandlers, au auth.Usecase,
 	authGroup.POST("", h.Login())
 	authGroup.PUT("", h.UpdateUser(), mw.AuthJWTMiddleware(au, cfg))
 	authGroup.DELETE("/:id", h.DeleteUser(), mw.AuthJWTMiddleware(au, cfg), mw.RoleBasedAuthMiddleware([]string{"admin"}))
-	authGroup.GET("/users", h.GetUserList())
-	authGroup.GET("/:id", h.GetUser(), mw.AuthJWTMiddleware(au, cfg))
+	authGroup.GET("/users", h.ListUser())
+	authGroup.GET("/:id", h.DetailUser(), mw.AuthJWTMiddleware(au, cfg))
 	authGroup.GET("/me", h.Me(), mw.AuthJWTMiddleware(au, cfg))
 }

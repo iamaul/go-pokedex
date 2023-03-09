@@ -22,7 +22,7 @@ ENV config=docker
 
 EXPOSE 5000
 
-ENTRYPOINT CompileDaemon --build="go build cmd/api/main.go" --command=./main
+ENTRYPOINT CompileDaemon --build="go build cmd/app/main.go" --command=./main
 
 
 

@@ -159,7 +159,7 @@ func (mw *MiddlewareManager) validateJWTToken(tokenString string, authUsecase au
 			return err
 		}
 
-		u, err := authUsecase.GetUserByID(c.Request().Context(), userUUID)
+		u, err := authUsecase.GetByID(c.Request().Context(), userUUID)
 		if err != nil {
 			return err
 		}

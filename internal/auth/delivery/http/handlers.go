@@ -103,7 +103,7 @@ func (h *AuthHandler) DeleteUser() echo.HandlerFunc {
 	}
 }
 
-func (h *AuthHandler) GetUserList() echo.HandlerFunc {
+func (h *AuthHandler) ListUser() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		paginationQuery, err := utils.GetPaginationFromCtx(c)
 		if err != nil {
@@ -121,7 +121,7 @@ func (h *AuthHandler) GetUserList() echo.HandlerFunc {
 	}
 }
 
-func (h *AuthHandler) GetUser() echo.HandlerFunc {
+func (h *AuthHandler) DetailUser() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		userID, err := primitive.ObjectIDFromHex(c.Param("id"))
 		if err != nil {
@@ -129,7 +129,7 @@ func (h *AuthHandler) GetUser() echo.HandlerFunc {
 			return c.JSON(httpErr.ErrorResponse(err))
 		}
 
-		user, err := h.authUsecase.GetUserByID(c.Request().Context(), userID)
+		user, err := h.authUsecase.GetByID(c.Request().Context(), userID)
 		if err != nil {
 			utils.LogResponseError(c, h.logger, err)
 			return c.JSON(httpErr.ErrorResponse(err))

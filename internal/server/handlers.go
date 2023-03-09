@@ -12,6 +12,9 @@ import (
 	authHttp "github.com/iamaul/go-pokedex/internal/auth/delivery/http"
 	authRepository "github.com/iamaul/go-pokedex/internal/auth/repository"
 	authUseCase "github.com/iamaul/go-pokedex/internal/auth/usecase"
+	monsterHttp "github.com/iamaul/go-pokedex/internal/monster/delivery/http"
+	monsterRepository "github.com/iamaul/go-pokedex/internal/monster/repository"
+	monsterUseCase "github.com/iamaul/go-pokedex/internal/monster/usecase"
 
 	apiMiddlewares "github.com/iamaul/go-pokedex/internal/middleware"
 	"github.com/iamaul/go-pokedex/pkg/csrf"
@@ -22,12 +25,15 @@ import (
 func (s *Server) MapRouteHandlers(e *echo.Echo) error {
 	// Repositories
 	authRepo := authRepository.NewAuthRepo(s.db)
+	monsterTypeRepo := monsterRepository.NewMonsterTypeRepo(s.db)
 
 	// Usecases
 	authUsecase := authUseCase.NewAuthUsecase(s.cfg, authRepo, s.logger)
+	monsterTypeUsecase := monsterUseCase.NewMonsterTypeUsecase(s.cfg, monsterTypeRepo, s.logger)
 
 	// Handlers
-	authHandlers := authHttp.NewAuthHandler(s.cfg, authUsecase, s.logger)
+	authHandler := authHttp.NewAuthHandler(s.cfg, authUsecase, s.logger)
+	monsterTypeHandler := monsterHttp.NewMonsterHandler(s.cfg, monsterTypeUsecase, s.logger)
 
 	mw := apiMiddlewares.NewMiddlewareManager(authUsecase, s.cfg, []string{"*"}, s.logger)
 
@@ -63,8 +69,10 @@ func (s *Server) MapRouteHandlers(e *echo.Echo) error {
 
 	health := v1.Group("/health")
 	authGroup := v1.Group("/auth")
+	monsterGroup := v1.Group("/monster")
 
-	authHttp.AuthRoutes(authGroup, authHandlers, authUsecase, s.cfg, mw)
+	authHttp.AuthRoutes(authGroup, authHandler, authUsecase, s.cfg, mw)
+	monsterHttp.MonsterRoutes(monsterGroup, monsterTypeHandler, authUsecase, s.cfg, mw)
 
 	health.GET("", func(c echo.Context) error {
 		s.logger.Infof("Health check requestId: %s", utils.GetRequestID(c))

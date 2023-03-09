@@ -10,6 +10,7 @@ type Monster struct {
 	ID           primitive.ObjectID   `json:"_id" bson:"_id,omitempty"`
 	MonsterTypes []primitive.ObjectID `json:"monster_types" bson:"monster_types"`
 	Name         string               `json:"name" bson:"name"`
+	ImageUrl     string               `json:"image_url" bson:"image_url"`
 	Description  string               `json:"description" bson:"description"`
 	Size         float32              `json:"size" bson:"size"`
 	Weight       float32              `json:"weight" bson:"weight"`

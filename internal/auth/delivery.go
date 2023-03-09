@@ -9,8 +9,8 @@ type DeliveryHandlers interface {
 	Login() echo.HandlerFunc
 	UpdateUser() echo.HandlerFunc
 	DeleteUser() echo.HandlerFunc
-	GetUserList() echo.HandlerFunc
-	GetUser() echo.HandlerFunc
+	ListUser() echo.HandlerFunc
+	DetailUser() echo.HandlerFunc
 	// CatchMonster() echo.HandlerFunc
 	Me() echo.HandlerFunc
 }

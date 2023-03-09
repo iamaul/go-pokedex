@@ -26,10 +26,12 @@ func NewMonsterTypeRepo(db *mongo.Database) monster.MonsterTypeRepository {
 }
 
 func (r *MonsterTypeRepo) CreateMonsterType(ctx context.Context, monsterType *domain.MonsterType) (*domain.MonsterType, error) {
-	_, err := r.db.InsertOne(ctx, monsterType)
+	result, err := r.db.InsertOne(ctx, monsterType)
 	if mongodb.IsDuplicate(err) {
-		return nil, errors.Wrap(err, httpErr.ErrEmailAlreadyExists)
+		return nil, errors.Wrap(err, httpErr.ErrUserAlreadyExists)
 	}
+
+	monsterType.ID = result.InsertedID.(primitive.ObjectID)
 
 	return monsterType, err
 }
@@ -120,9 +122,6 @@ func (r *MonsterTypeRepo) FindByName(ctx context.Context, monsterTypeName string
 	var monsterType domain.MonsterType
 
 	err := r.db.FindOne(ctx, bson.M{"name": monsterTypeName}).Decode(&monsterType)
-	if err != nil {
-		return &domain.MonsterType{}, err
-	}
 
-	return &monsterType, nil
+	return &monsterType, err
 }
