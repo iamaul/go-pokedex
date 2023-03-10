@@ -23,6 +23,14 @@ func NewAuthHandler(cfg *config.Config, authUsecase auth.Usecase, log logger.Log
 	return &AuthHandler{cfg: cfg, authUsecase: authUsecase, logger: log}
 }
 
+// Register godoc
+// @Summary Register new user
+// @Description register new user, returns user and token
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Success 201 {object} domain.User
+// @Router /auth/new [post]
 func (h *AuthHandler) Register() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		user := &domain.User{}
@@ -41,6 +49,14 @@ func (h *AuthHandler) Register() echo.HandlerFunc {
 	}
 }
 
+// Login godoc
+// @Summary user authentication
+// @Description returns user and token
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Success 200 {object} domain.User
+// @Router /auth [post]
 func (h *AuthHandler) Login() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		login := &domain.UserLogin{}
@@ -62,6 +78,15 @@ func (h *AuthHandler) Login() echo.HandlerFunc {
 	}
 }
 
+// UpdateUser godoc
+// @Summary Update user
+// @Description update existing user
+// @Tags Auth
+// @Accept json
+// @Param id path int true "id"
+// @Produce json
+// @Success 200 {object} domain.User
+// @Router /auth/{id} [put]
 func (h *AuthHandler) UpdateUser() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		me, ok := c.Get("user").(*domain.User)
@@ -86,6 +111,16 @@ func (h *AuthHandler) UpdateUser() echo.HandlerFunc {
 	}
 }
 
+// DeleteUser godoc
+// @Summary Delete user
+// @Description delete existing user
+// @Tags Auth
+// @Accept json
+// @Param id path int true "id"
+// @Produce json
+// @Success 200 {string} string	"ok"
+// @Failure 500 {object} httpErr.RestError
+// @Router /auth/{id} [delete]
 func (h *AuthHandler) DeleteUser() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		userID, err := primitive.ObjectIDFromHex(c.Param("id"))
@@ -103,6 +138,14 @@ func (h *AuthHandler) DeleteUser() echo.HandlerFunc {
 	}
 }
 
+// ListUser godoc
+// @Summary Get user list
+// @Description list of users
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Success 200 {object} domain.User
+// @Router /auth/user/list [get]
 func (h *AuthHandler) ListUser() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		paginationQuery, err := utils.GetPaginationFromCtx(c)
@@ -121,6 +164,15 @@ func (h *AuthHandler) ListUser() echo.HandlerFunc {
 	}
 }
 
+// DetailUser godoc
+// @Summary Detail user
+// @Description get user detail
+// @Tags Auth
+// @Accept json
+// @Param id path int true "id"
+// @Produce json
+// @Success 200 {object} domain.User
+// @Router /auth/{id} [get]
 func (h *AuthHandler) DetailUser() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		userID, err := primitive.ObjectIDFromHex(c.Param("id"))
@@ -139,6 +191,15 @@ func (h *AuthHandler) DetailUser() echo.HandlerFunc {
 	}
 }
 
+// CatchMonster godoc
+// @Summary Catch monster
+// @Description capture a monster
+// @Tags Auth
+// @Accept json
+// @Param id path int true "id"
+// @Produce json
+// @Success 200 {object} domain.UserMonsterBody
+// @Router /auth/{id} [post]
 func (h *AuthHandler) CatchMonster() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		userID, err := primitive.ObjectIDFromHex(c.Param("id"))
@@ -162,6 +223,15 @@ func (h *AuthHandler) CatchMonster() echo.HandlerFunc {
 	}
 }
 
+// Me godoc
+// @Summary Get user by id
+// @Description Get current user by id
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Success 200 {object} domain.User
+// @Failure 500 {object} httpErr.RestError
+// @Router /auth/me [get]
 func (h *AuthHandler) Me() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		user, ok := c.Get("user").(*domain.User)

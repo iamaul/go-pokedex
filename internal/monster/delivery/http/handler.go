@@ -24,6 +24,14 @@ func NewMonsterHandler(cfg *config.Config, monsterTypeUsecase monster.MonsterTyp
 	return &MonsterHandler{cfg: cfg, monsterTypeUsecase: monsterTypeUsecase, monsterUsecase: monsterUsecase, logger: log}
 }
 
+// CreateMonsterType godoc
+// @Summary Create a new monster type
+// @Description returns monster type
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Success 201 {object} domain.MonsterType
+// @Router /monster/type [post]
 func (h *MonsterHandler) CreateMonsterType() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		monsterType := &domain.MonsterType{}
@@ -42,6 +50,15 @@ func (h *MonsterHandler) CreateMonsterType() echo.HandlerFunc {
 	}
 }
 
+// UpdateMonsterType godoc
+// @Summary Update monster type
+// @Description update existing monster type
+// @Tags Auth
+// @Accept json
+// @Param id path int true "id"
+// @Produce json
+// @Success 200 {object} domain.MonsterTypeUpdate
+// @Router /monster/type/{id} [put]
 func (h *MonsterHandler) UpdateMonsterType() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		monsterTypeID, err := primitive.ObjectIDFromHex(c.Param("id"))
@@ -67,6 +84,16 @@ func (h *MonsterHandler) UpdateMonsterType() echo.HandlerFunc {
 	}
 }
 
+// DeleteMonsterType godoc
+// @Summary Delete monster type
+// @Description delete existing monster type
+// @Tags Auth
+// @Accept json
+// @Param id path int true "id"
+// @Produce json
+// @Success 200 {string} string	"ok"
+// @Failure 500 {object} httpErr.RestError
+// @Router /monster/type/{id} [put]
 func (h *MonsterHandler) DeleteMonsterType() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		monsterTypeID, err := primitive.ObjectIDFromHex(c.Param("id"))
@@ -84,6 +111,14 @@ func (h *MonsterHandler) DeleteMonsterType() echo.HandlerFunc {
 	}
 }
 
+// ListMonsterType godoc
+// @Summary Get monster type list
+// @Description list of monster types
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Success 200 {object} domain.MonsterTypeList
+// @Router /monster/type/list [get]
 func (h *MonsterHandler) ListMonsterType() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		paginationQuery, err := utils.GetPaginationFromCtx(c)
@@ -102,6 +137,15 @@ func (h *MonsterHandler) ListMonsterType() echo.HandlerFunc {
 	}
 }
 
+// DetailMonsterType godoc
+// @Summary Detail monster type
+// @Description Get monster type detail
+// @Tags Auth
+// @Accept json
+// @Param id path int true "id"
+// @Produce json
+// @Success 200 {object} domain.MonsterType
+// @Router /monster/type/{id} [get]
 func (h *MonsterHandler) DetailMonsterType() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		monsterTypeID, err := primitive.ObjectIDFromHex(c.Param("id"))
@@ -120,6 +164,14 @@ func (h *MonsterHandler) DetailMonsterType() echo.HandlerFunc {
 	}
 }
 
+// CreateMonster godoc
+// @Summary Create a new monster
+// @Description returns monster
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Success 201 {object} domain.Monster
+// @Router /monster [post]
 func (h *MonsterHandler) CreateMonster() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		monster := &domain.Monster{}
@@ -138,6 +190,15 @@ func (h *MonsterHandler) CreateMonster() echo.HandlerFunc {
 	}
 }
 
+// UpdateMonster godoc
+// @Summary Update monster
+// @Description update existing monster
+// @Tags Auth
+// @Accept json
+// @Param id path int true "id"
+// @Produce json
+// @Success 200 {object} domain.MonsterUpdate
+// @Router /monster/{id} [put]
 func (h *MonsterHandler) UpdateMonster() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		monsterID, err := primitive.ObjectIDFromHex(c.Param("id"))
@@ -163,6 +224,16 @@ func (h *MonsterHandler) UpdateMonster() echo.HandlerFunc {
 	}
 }
 
+// DeleteMonster godoc
+// @Summary Delete monster
+// @Description delete existing monster
+// @Tags Auth
+// @Accept json
+// @Param id path int true "id"
+// @Produce json
+// @Success 200 {string} string	"ok"
+// @Failure 500 {object} httpErr.RestError
+// @Router /monster/{id} [put]
 func (h *MonsterHandler) DeleteMonster() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		monsterID, err := primitive.ObjectIDFromHex(c.Param("id"))
@@ -180,6 +251,14 @@ func (h *MonsterHandler) DeleteMonster() echo.HandlerFunc {
 	}
 }
 
+// ListMonster godoc
+// @Summary Get monster list
+// @Description list of monster
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Success 200 {object} domain.MonsterList
+// @Router /monster/list [get]
 func (h *MonsterHandler) ListMonster() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		paginationQuery, err := utils.GetPaginationFromCtx(c)
@@ -198,6 +277,15 @@ func (h *MonsterHandler) ListMonster() echo.HandlerFunc {
 	}
 }
 
+// DetailMonster godoc
+// @Summary Detail monster
+// @Description Get monster detail
+// @Tags Auth
+// @Accept json
+// @Param id path int true "id"
+// @Produce json
+// @Success 200 {object} domain.Monster
+// @Router /monster/{id} [get]
 func (h *MonsterHandler) DetailMonster() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		monsterID, err := primitive.ObjectIDFromHex(c.Param("id"))
@@ -216,6 +304,15 @@ func (h *MonsterHandler) DetailMonster() echo.HandlerFunc {
 	}
 }
 
+// AddMonsterType godoc
+// @Summary Add monster type
+// @Description add monster type
+// @Tags Auth
+// @Accept json
+// @Param id path int true "id"
+// @Produce json
+// @Success 200 {object} domain.MonsterTypeBody
+// @Router /monster/{id} [post]
 func (h *MonsterHandler) AddMonsterType() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		monsterID, err := primitive.ObjectIDFromHex(c.Param("id"))
