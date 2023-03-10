@@ -22,7 +22,7 @@ type MonsterRepository interface {
 	UpdateMonster(ctx context.Context, monster *domain.MonsterUpdate) (*domain.MonsterUpdate, error)
 	DeleteMonster(ctx context.Context, monsterID primitive.ObjectID) error
 	FetchMonsters(ctx context.Context, pq *utils.PaginationQuery) (*domain.MonsterList, error)
+	AddMonsterType(ctx context.Context, monsterID, monsterTypeID primitive.ObjectID) error
 	FindByID(ctx context.Context, monsterID primitive.ObjectID) (*domain.Monster, error)
 	FindByName(ctx context.Context, monsterName string) (*domain.Monster, error)
-	AttachMonsterType(ctx context.Context, monsterID, monsterTypeID primitive.ObjectID) error
 }

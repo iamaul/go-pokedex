@@ -14,6 +14,6 @@ type Usecase interface {
 	UserUpdate(ctx context.Context, user *domain.UserUpdate) (*domain.UserUpdate, error)
 	UserDeletion(ctx context.Context, userID primitive.ObjectID) error
 	UserList(ctx context.Context, pq *utils.PaginationQuery) (*domain.UserList, error)
-	UserCatchMonster(ctx context.Context, userID primitive.ObjectID, monsterID primitive.ObjectID) error
+	UserCatchMonster(ctx context.Context, userID, monsterID primitive.ObjectID) error
 	GetByID(ctx context.Context, userID primitive.ObjectID) (*domain.User, error)
 }

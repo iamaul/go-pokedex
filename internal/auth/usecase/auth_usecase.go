@@ -7,6 +7,7 @@ import (
 	"github.com/iamaul/go-pokedex/config"
 	"github.com/iamaul/go-pokedex/internal/auth"
 	"github.com/iamaul/go-pokedex/internal/domain"
+	"github.com/iamaul/go-pokedex/internal/monster"
 	httpErr "github.com/iamaul/go-pokedex/pkg/error"
 	"github.com/iamaul/go-pokedex/pkg/logger"
 	"github.com/iamaul/go-pokedex/pkg/utils"
@@ -15,13 +16,14 @@ import (
 )
 
 type AuthUsecase struct {
-	cfg      *config.Config
-	authRepo auth.Repository
-	logger   logger.Logger
+	cfg         *config.Config
+	authRepo    auth.Repository
+	monsterRepo monster.MonsterRepository
+	logger      logger.Logger
 }
 
-func NewAuthUsecase(cfg *config.Config, authRepo auth.Repository, log logger.Logger) auth.Usecase {
-	return &AuthUsecase{cfg: cfg, authRepo: authRepo, logger: log}
+func NewAuthUsecase(cfg *config.Config, authRepo auth.Repository, monsterRepo monster.MonsterRepository, log logger.Logger) auth.Usecase {
+	return &AuthUsecase{cfg: cfg, authRepo: authRepo, monsterRepo: monsterRepo, logger: log}
 }
 
 func (u *AuthUsecase) UserRegistration(ctx context.Context, user *domain.User) (*domain.UserWithToken, error) {
@@ -103,7 +105,14 @@ func (u *AuthUsecase) UserList(ctx context.Context, pq *utils.PaginationQuery) (
 }
 
 func (u *AuthUsecase) UserCatchMonster(ctx context.Context, userID primitive.ObjectID, monsterID primitive.ObjectID) error {
-	// @ToDo: Given monster id to be attached with owner (user property)
+	monster, err := u.monsterRepo.FindByID(ctx, monsterID)
+	if err != nil {
+		return err
+	}
+
+	if err := u.authRepo.AddMonster(ctx, userID, monster.ID); err != nil {
+		return err
+	}
 	return nil
 }
 

@@ -15,5 +15,5 @@ type Repository interface {
 	FetchUsers(ctx context.Context, pq *utils.PaginationQuery) (*domain.UserList, error)
 	FindByID(ctx context.Context, userID primitive.ObjectID) (*domain.User, error)
 	FindByUsername(ctx context.Context, username string) (*domain.User, error)
-	AttachMonster(ctx context.Context, userID, monsterID primitive.ObjectID) error
+	AddMonster(ctx context.Context, userID, monsterID primitive.ObjectID) error
 }

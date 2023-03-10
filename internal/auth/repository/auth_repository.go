@@ -127,7 +127,7 @@ func (r *AuthRepo) FindByUsername(ctx context.Context, username string) (*domain
 	return &user, err
 }
 
-func (r *AuthRepo) AttachMonster(ctx context.Context, userID, monsterID primitive.ObjectID) error {
+func (r *AuthRepo) AddMonster(ctx context.Context, userID, monsterID primitive.ObjectID) error {
 	_, err := r.db.UpdateOne(ctx, bson.M{"_id": userID}, bson.M{"$push": bson.M{"monsters": monsterID}})
 
 	return err

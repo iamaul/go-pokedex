@@ -139,6 +139,29 @@ func (h *AuthHandler) DetailUser() echo.HandlerFunc {
 	}
 }
 
+func (h *AuthHandler) CatchMonster() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		userID, err := primitive.ObjectIDFromHex(c.Param("id"))
+		if err != nil {
+			utils.LogResponseError(c, h.logger, err)
+			return c.JSON(httpErr.ErrorResponse(err))
+		}
+
+		monster := &domain.UserMonsterBody{}
+		if err := utils.ReadRequest(c, monster); err != nil {
+			utils.LogResponseError(c, h.logger, err)
+			return c.JSON(httpErr.ErrorResponse(err))
+		}
+
+		if err := h.authUsecase.UserCatchMonster(c.Request().Context(), userID, monster.MonsterID); err != nil {
+			utils.LogResponseError(c, h.logger, err)
+			return c.JSON(httpErr.ErrorResponse(err))
+		}
+
+		return c.JSON(http.StatusOK, monster)
+	}
+}
+
 func (h *AuthHandler) Me() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		user, ok := c.Get("user").(*domain.User)

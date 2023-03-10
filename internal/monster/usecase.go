@@ -20,7 +20,7 @@ type MonsterUsecase interface {
 	MonsterCreate(ctx context.Context, monster *domain.Monster) (*domain.Monster, error)
 	MonsterUpdate(ctx context.Context, monster *domain.MonsterUpdate) (*domain.MonsterUpdate, error)
 	MonsterDeletion(ctx context.Context, monsterID primitive.ObjectID) error
+	AttachMonsterType(ctx context.Context, monsterID, monsterTypeID primitive.ObjectID) error
 	GetMonsterList(ctx context.Context, pq *utils.PaginationQuery) (*domain.MonsterList, error)
 	GetByID(ctx context.Context, monsterID primitive.ObjectID) (*domain.Monster, error)
-	AttachMonsterType(ctx context.Context, monsterID, monsterTypeID primitive.ObjectID) error
 }

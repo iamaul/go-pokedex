@@ -23,7 +23,7 @@ type Monster struct {
 }
 
 type MonsterUpdate struct {
-	ID          primitive.ObjectID `json:"_id"`
+	ID          primitive.ObjectID `json:"_id,omitempty"`
 	Name        string             `json:"name"`
 	Description string             `json:"description"`
 	Size        float32            `json:"size"`
@@ -32,6 +32,10 @@ type MonsterUpdate struct {
 	Attack      int32              `json:"attack"`
 	Defense     int32              `json:"defense"`
 	Speed       int32              `json:"speed"`
+}
+
+type MonsterTypeBody struct {
+	MonsterTypeID primitive.ObjectID `json:"monster_type_id"`
 }
 
 type MonsterList struct {

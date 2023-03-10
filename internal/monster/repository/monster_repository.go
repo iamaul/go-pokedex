@@ -126,7 +126,7 @@ func (r *MonsterRepo) FindByName(ctx context.Context, monsterName string) (*doma
 	return &monster, err
 }
 
-func (r *MonsterRepo) AttachMonsterType(ctx context.Context, monsterID, monsterTypeID primitive.ObjectID) error {
+func (r *MonsterRepo) AddMonsterType(ctx context.Context, monsterID, monsterTypeID primitive.ObjectID) error {
 	_, err := r.db.UpdateOne(ctx, bson.M{"_id": monsterID}, bson.M{"$push": bson.M{"monster_types": monsterTypeID}})
 
 	return err

@@ -26,14 +26,16 @@ func (s *Server) MapRouteHandlers(e *echo.Echo) error {
 	// Repositories
 	authRepo := authRepository.NewAuthRepo(s.db)
 	monsterTypeRepo := monsterRepository.NewMonsterTypeRepo(s.db)
+	monsterRepo := monsterRepository.NewMonsterRepo(s.db)
 
 	// Usecases
-	authUsecase := authUseCase.NewAuthUsecase(s.cfg, authRepo, s.logger)
+	authUsecase := authUseCase.NewAuthUsecase(s.cfg, authRepo, monsterRepo, s.logger)
 	monsterTypeUsecase := monsterUseCase.NewMonsterTypeUsecase(s.cfg, monsterTypeRepo, s.logger)
+	monsterUsecase := monsterUseCase.NewMonsterUsecase(s.cfg, monsterRepo, monsterTypeRepo, s.logger)
 
 	// Handlers
 	authHandler := authHttp.NewAuthHandler(s.cfg, authUsecase, s.logger)
-	monsterTypeHandler := monsterHttp.NewMonsterHandler(s.cfg, monsterTypeUsecase, s.logger)
+	monsterTypeHandler := monsterHttp.NewMonsterHandler(s.cfg, monsterTypeUsecase, monsterUsecase, s.logger)
 
 	mw := apiMiddlewares.NewMiddlewareManager(authUsecase, s.cfg, []string{"*"}, s.logger)
 

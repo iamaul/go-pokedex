@@ -24,6 +24,10 @@ type UserUpdate struct {
 	Role     *string            `json:"role"`
 }
 
+type UserMonsterBody struct {
+	MonsterID primitive.ObjectID `json:"monster_id"`
+}
+
 type UserLogin struct {
 	Username string `json:"username" validate:"required"`
 	Password string `json:"password" validate:"required,gte=6"`
